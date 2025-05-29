@@ -95,6 +95,17 @@
         align-items: center;
       }
     }
+
+    @keyframes bounceIn {
+      0%   { transform: scale(0.2); opacity: 0; }
+      50%  { transform: scale(1.2); opacity: 1; }
+      70%  { transform: scale(0.9); }
+      100% { transform: scale(1); }
+    }
+
+    .logo.animated {
+      animation: bounceIn 0.6s ease;
+    }
   </style>
 </head>
 <body>
@@ -116,11 +127,10 @@
   </div>
 
   <footer>
-    Made by Justin Brylle G. Salazar
+    Made by Justin Brylle G. Salazar 🏀
   </footer>
 
   <script>
-    // NBA teams list - full 30 teams
     const teams = [
       "Hawks", "Celtics", "Nets", "Hornets", "Bulls", "Cavaliers", "Mavericks",
       "Nuggets", "Pistons", "Warriors", "Rockets", "Pacers", "Clippers",
@@ -129,79 +139,56 @@
       "Spurs", "Raptors", "Jazz", "Wizards"
     ];
 
-    // Return a team logo based on name (using ESPN CDN for simplicity)
-function getLogo(team) {
-  const nameMap = {
-    "76ers": "sixers",
-    "Blazers": "blazers", // use actual name instead of "trail-blazers"
-    "Pelicans": "pelicans",
-    "Clippers": "clippers",
-    "Cavaliers": "cavaliers",
-    "Timberwolves": "timberwolves",
-    "Trail Blazers": "blazers"
-  };
+    function getTeamId(teamName) {
+      const teamIds = {
+        hawks: "1610612737", celtics: "1610612738", nets: "1610612751", hornets: "1610612766",
+        bulls: "1610612741", cavaliers: "1610612739", mavericks: "1610612742", nuggets: "1610612743",
+        pistons: "1610612765", warriors: "1610612744", rockets: "1610612745", pacers: "1610612754",
+        clippers: "1610612746", lakers: "1610612747", grizzlies: "1610612763", heat: "1610612748",
+        bucks: "1610612749", timberwolves: "1610612750", pelicans: "1610612740", knicks: "1610612752",
+        thunder: "1610612760", magic: "1610612753", sixers: "1610612755", suns: "1610612756",
+        blazers: "1610612757", kings: "1610612758", spurs: "1610612759", raptors: "1610612761",
+        jazz: "1610612762", wizards: "1610612764"
+      };
+      return teamIds[teamName] || "0000000000";
+    }
 
-  const fixedName = nameMap[team] || team.toLowerCase().replace(/\s/g, "");
-  return `https://cdn.nba.com/logos/nba/${getTeamId(fixedName)}/global/L/logo.svg`;
-}
+    function getLogo(team) {
+      const nameMap = {
+        "76ers": "sixers",
+        "Blazers": "blazers"
+      };
+      const fixed = nameMap[team] || team.toLowerCase().replace(/\s/g, "");
+      return `https://cdn.nba.com/logos/nba/${getTeamId(fixed)}/global/L/logo.svg`;
+    }
 
-// Match NBA team names to NBA.com team IDs (used for logos)
-function getTeamId(teamName) {
-  const teamIds = {
-    hawks: "1610612737",
-    celtics: "1610612738",
-    nets: "1610612751",
-    hornets: "1610612766",
-    bulls: "1610612741",
-    cavaliers: "1610612739",
-    mavericks: "1610612742",
-    nuggets: "1610612743",
-    pistons: "1610612765",
-    warriors: "1610612744",
-    rockets: "1610612745",
-    pacers: "1610612754",
-    clippers: "1610612746",
-    lakers: "1610612747",
-    grizzlies: "1610612763",
-    heat: "1610612748",
-    bucks: "1610612749",
-    timberwolves: "1610612750",
-    pelicans: "1610612740",
-    knicks: "1610612752",
-    thunder: "1610612760",
-    magic: "1610612753",
-    sixers: "1610612755",
-    suns: "1610612756",
-    blazers: "1610612757",
-    kings: "1610612758",
-    spurs: "1610612759",
-    raptors: "1610612761",
-    jazz: "1610612762",
-    wizards: "1610612764"
-  };
-
-  return teamIds[teamName] || "0000000000"; // fallback in case of typo
-}
-
-
-    // Main function: randomize and display results
     function randomizeTeams() {
       const shuffled = [...teams].sort(() => 0.5 - Math.random());
       const p1 = shuffled.slice(0, 2);
       const p2 = shuffled.slice(2, 4);
 
-      // Update Team Names
-      document.getElementById("p1-teams").textContent = `${p1[0]} & ${p1[1]}`;
-      document.getElementById("p2-teams").textContent = `${p2[0]} & ${p2[1]}`;
+      // Add suspense effect
+      document.getElementById("p1-teams").textContent = "Rolling...";
+      document.getElementById("p2-teams").textContent = "Rolling...";
+      document.getElementById("p1-logos").innerHTML = "";
+      document.getElementById("p2-logos").innerHTML = "";
 
-      // Update Logos
-    document.getElementById("p1-logos").innerHTML = p1.map(t =>
-      `<img class="logo" src="${getLogo(t)}" alt="${t} logo">`
-    ).join("");
+      // Play arcade sound
+    const audio = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_d4198c4451.mp3?filename=suspenseful-horror-sound-2-229141.mp3");
+      audio.play();
 
-    document.getElementById("p2-logos").innerHTML = p2.map(t =>
-      `<img class="logo" src="${getLogo(t)}" alt="${t} logo">`
-    ).join("");
+      setTimeout(() => {
+        document.getElementById("p1-teams").textContent = `${p1[0]} & ${p1[1]}`;
+        document.getElementById("p2-teams").textContent = `${p2[0]} & ${p2[1]}`;
+
+        document.getElementById("p1-logos").innerHTML = p1.map(t =>
+          `<img class="logo animated" src="${getLogo(t)}" alt="${t} logo">`
+        ).join("");
+
+        document.getElementById("p2-logos").innerHTML = p2.map(t =>
+          `<img class="logo animated" src="${getLogo(t)}" alt="${t} logo">`
+        ).join("");
+      }, 1500);
     }
   </script>
 
