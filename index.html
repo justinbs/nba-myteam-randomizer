@@ -71,6 +71,7 @@
     .team {
       margin-top: 12px;
       font-size: 1.1rem;
+      min-height: 2rem;
     }
 
     .logo {
@@ -81,6 +82,29 @@
 
     .logo:hover {
       transform: scale(1.1);
+    }
+
+    .animated {
+      animation: bounceIn 0.6s ease;
+    }
+
+    .shaking {
+      animation: shake 0.15s linear infinite;
+    }
+
+    @keyframes bounceIn {
+      0%   { transform: scale(0.2); opacity: 0; }
+      50%  { transform: scale(1.2); opacity: 1; }
+      70%  { transform: scale(0.9); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0px); }
+      25% { transform: translateX(-3px); }
+      50% { transform: translateX(3px); }
+      75% { transform: translateX(-3px); }
+      100% { transform: translateX(0px); }
     }
 
     footer {
@@ -94,17 +118,6 @@
         flex-direction: column;
         align-items: center;
       }
-    }
-
-    @keyframes bounceIn {
-      0%   { transform: scale(0.2); opacity: 0; }
-      50%  { transform: scale(1.2); opacity: 1; }
-      70%  { transform: scale(0.9); }
-      100% { transform: scale(1); }
-    }
-
-    .logo.animated {
-      animation: bounceIn 0.6s ease;
     }
   </style>
 </head>
@@ -127,7 +140,7 @@
   </div>
 
   <footer>
-    Made by Justin Brylle G. Salazar 🏀
+    Made by Justin Brylle G. Salazar 🎮
   </footer>
 
   <script>
@@ -154,38 +167,58 @@
     }
 
     function getLogo(team) {
-      const nameMap = {
-        "76ers": "sixers",
-        "Blazers": "blazers"
-      };
+      const nameMap = { "76ers": "sixers", "Blazers": "blazers" };
       const fixed = nameMap[team] || team.toLowerCase().replace(/\s/g, "");
       return `https://cdn.nba.com/logos/nba/${getTeamId(fixed)}/global/L/logo.svg`;
     }
 
     function randomizeTeams() {
       const shuffled = [...teams].sort(() => 0.5 - Math.random());
-      const p1 = shuffled.slice(0, 2);
-      const p2 = shuffled.slice(2, 4);
+      const p1Final = shuffled.slice(0, 2);
+      const p2Final = shuffled.slice(2, 4);
 
-      // Add suspense effect
-      document.getElementById("p1-teams").textContent = "Rolling...";
-      document.getElementById("p2-teams").textContent = "Rolling...";
-      document.getElementById("p1-logos").innerHTML = "";
-      document.getElementById("p2-logos").innerHTML = "";
+      const p1El = document.getElementById("p1-teams");
+      const p2El = document.getElementById("p2-teams");
+      const p1Logos = document.getElementById("p1-logos");
+      const p2Logos = document.getElementById("p2-logos");
 
-      // Play arcade sound
-    const audio = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_d4198c4451.mp3?filename=suspenseful-horror-sound-2-229141.mp3");
-      audio.play();
+      p1Logos.innerHTML = "";
+      p2Logos.innerHTML = "";
+      p1El.classList.add("shaking");
+      p2El.classList.add("shaking");
+
+      const rollingSound = new Audio("https://cdn.pixabay.com/download/audio/2022/03/22/audio_57f1b1244f.mp3?filename=dice-roll-105280.mp3");
+      rollingSound.loop = true;
+      rollingSound.play();
+
+      let count = 0;
+      const rollingInterval = setInterval(() => {
+        const r1 = teams[Math.floor(Math.random() * teams.length)];
+        const r2 = teams[Math.floor(Math.random() * teams.length)];
+        const r3 = teams[Math.floor(Math.random() * teams.length)];
+        const r4 = teams[Math.floor(Math.random() * teams.length)];
+        p1El.textContent = `${r1} & ${r2}`;
+        p2El.textContent = `${r3} & ${r4}`;
+        count++;
+      }, 100);
 
       setTimeout(() => {
-        document.getElementById("p1-teams").textContent = `${p1[0]} & ${p1[1]}`;
-        document.getElementById("p2-teams").textContent = `${p2[0]} & ${p2[1]}`;
+        clearInterval(rollingInterval);
+        rollingSound.pause();
+        p1El.classList.remove("shaking");
+        p2El.classList.remove("shaking");
 
-        document.getElementById("p1-logos").innerHTML = p1.map(t =>
+        const suspenseSound = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_d4198c4451.mp3?filename=suspenseful-horror-sound-2-229141.mp3");
+        suspenseSound.play();
+
+        p1El.textContent = `${p1Final[0]} & ${p1Final[1]}`;
+        p2El.textContent = `${p2Final[0]} & ${p2Final[1]}`;
+
+        p1Logos.innerHTML = p1Final.map(t =>
           `<img class="logo animated" src="${getLogo(t)}" alt="${t} logo">`
         ).join("");
 
-        document.getElementById("p2-logos").innerHTML = p2.map(t =>
+        p2Logos.innerHTML = p2Final.map(t =>
           `<img class="logo animated" src="${getLogo(t)}" alt="${t} logo">`
         ).join("");
       }, 1500);
