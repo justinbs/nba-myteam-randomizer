@@ -209,7 +209,8 @@
         p2El.classList.remove("shaking");
 
         const suspenseSound = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_d4198c4451.mp3?filename=suspenseful-horror-sound-2-229141.mp3");
-        suspenseSound.play();
+        suspenseSound.play().catch(err => {
+          console.warn("Could nopt play suspense sound: ", err);
 
         p1El.textContent = `${p1Final[0]} & ${p1Final[1]}`;
         p2El.textContent = `${p2Final[0]} & ${p2Final[1]}`;
