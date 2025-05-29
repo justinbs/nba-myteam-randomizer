@@ -130,10 +130,59 @@
     ];
 
     // Return a team logo based on name (using ESPN CDN for simplicity)
-    function getLogo(team) {
-      const clean = team.toLowerCase().replace("76ers", "sixers").replace("blazers", "trail-blazers");
-      return `https://a.espncdn.com/i/teamlogos/nba/500/${clean.replace(/\s/g, "-")}.png`;
-    }
+function getLogo(team) {
+  const nameMap = {
+    "76ers": "sixers",
+    "Blazers": "blazers", // use actual name instead of "trail-blazers"
+    "Pelicans": "pelicans",
+    "Clippers": "clippers",
+    "Cavaliers": "cavaliers",
+    "Timberwolves": "timberwolves",
+    "Trail Blazers": "blazers"
+  };
+
+  const fixedName = nameMap[team] || team.toLowerCase().replace(/\s/g, "");
+  return `https://cdn.nba.com/logos/nba/${getTeamId(fixedName)}/global/L/logo.svg`;
+}
+
+// Match NBA team names to NBA.com team IDs (used for logos)
+function getTeamId(teamName) {
+  const teamIds = {
+    hawks: "1610612737",
+    celtics: "1610612738",
+    nets: "1610612751",
+    hornets: "1610612766",
+    bulls: "1610612741",
+    cavaliers: "1610612739",
+    mavericks: "1610612742",
+    nuggets: "1610612743",
+    pistons: "1610612765",
+    warriors: "1610612744",
+    rockets: "1610612745",
+    pacers: "1610612754",
+    clippers: "1610612746",
+    lakers: "1610612747",
+    grizzlies: "1610612763",
+    heat: "1610612748",
+    bucks: "1610612749",
+    timberwolves: "1610612750",
+    pelicans: "1610612740",
+    knicks: "1610612752",
+    thunder: "1610612760",
+    magic: "1610612753",
+    sixers: "1610612755",
+    suns: "1610612756",
+    blazers: "1610612757",
+    kings: "1610612758",
+    spurs: "1610612759",
+    raptors: "1610612761",
+    jazz: "1610612762",
+    wizards: "1610612764"
+  };
+
+  return teamIds[teamName] || "0000000000"; // fallback in case of typo
+}
+
 
     // Main function: randomize and display results
     function randomizeTeams() {
@@ -141,12 +190,18 @@
       const p1 = shuffled.slice(0, 2);
       const p2 = shuffled.slice(2, 4);
 
-      // Update text and logos
+      // Update Team Names
       document.getElementById("p1-teams").textContent = `${p1[0]} & ${p1[1]}`;
       document.getElementById("p2-teams").textContent = `${p2[0]} & ${p2[1]}`;
 
-      document.getElementById("p1-logos").innerHTML = p1.map(t => `<img class="logo" src="${getLogo(t)}" alt="${t} logo">`).join("");
-      document.getElementById("p2-logos").innerHTML = p2.map(t => `<img class="logo" src="${getLogo(t)}" alt="${t} logo">`).join("");
+      // Update Logos
+    document.getElementById("p1-logos").innerHTML = p1.map(t =>
+      `<img class="logo" src="${getLogo(t)}" alt="${t} logo">`
+    ).join("");
+
+    document.getElementById("p2-logos").innerHTML = p2.map(t =>
+      `<img class="logo" src="${getLogo(t)}" alt="${t} logo">`
+    ).join("");
     }
   </script>
 
